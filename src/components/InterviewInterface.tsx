@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Mic, MicOff, Play, Square, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface FeedbackPoint {
   category: string;
@@ -17,6 +19,9 @@ export const InterviewInterface = () => {
   const [userAnswer, setUserAnswer] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [interviewStarted, setInterviewStarted] = useState(false);
+  const [showJobForm, setShowJobForm] = useState(true);
+  const [jobTitle, setJobTitle] = useState('');
+  const [skills, setSkills] = useState('');
   
   const questions = [
     "Tell me about yourself and your background.",
@@ -57,6 +62,14 @@ export const InterviewInterface = () => {
     setUserAnswer('');
   };
 
+  const handleJobFormSubmit = () => {
+    if (jobTitle.trim() && skills.trim()) {
+      setShowJobForm(false);
+    }
+  };
+
+  const isFormValid = jobTitle.trim() && skills.trim();
+
   const handleRecordToggle = () => {
     if (!isRecording) {
       setIsRecording(true);
@@ -92,6 +105,76 @@ export const InterviewInterface = () => {
     return '⭐'.repeat(score) + '☆'.repeat(maxScore - score);
   };
 
+  // Job Form Screen
+  if (showJobForm) {
+    return (
+      <div className="min-h-screen gradient-hero flex items-center justify-center p-6">
+        <div className="w-full max-w-lg animate-fade-in">
+          <Card className="glassmorphic p-8 card-glow">
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="text-center space-y-3">
+                <h2 className="text-2xl font-bold text-foreground">
+                  🎤 Start Your Mock Interview
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  Enter your job title and top skills so AI can personalize your interview.
+                </p>
+              </div>
+
+              {/* Form Fields */}
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="jobTitle" className="text-foreground font-medium">
+                    Job Title
+                  </Label>
+                  <Input
+                    id="jobTitle"
+                    type="text"
+                    placeholder="e.g. Frontend Developer"
+                    value={jobTitle}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    className="bg-secondary/50 border-glassmorphic-border text-foreground placeholder:text-muted-foreground focus:ring-primary/50 transition-smooth"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="skills" className="text-foreground font-medium">
+                    Skills
+                  </Label>
+                  <Input
+                    id="skills"
+                    type="text"
+                    placeholder="e.g. React, JavaScript, Tailwind"
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    className="bg-secondary/50 border-glassmorphic-border text-foreground placeholder:text-muted-foreground focus:ring-primary/50 transition-smooth"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                onClick={handleJobFormSubmit}
+                disabled={!isFormValid}
+                className={`w-full py-3 transition-smooth border-0 font-medium ${
+                  isFormValid 
+                    ? 'gradient-button hover:scale-105 shadow-xl text-primary-foreground' 
+                    : 'bg-secondary/50 text-muted-foreground cursor-not-allowed'
+                }`}
+                size="lg"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Start Interview
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Welcome Screen  
   if (!interviewStarted) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center p-6">
